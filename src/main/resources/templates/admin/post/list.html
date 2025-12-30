@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>게시글 목록</h2>
+<a href="/admin/posts/new">새 글</a>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>노출</th>
+    </tr>
+    <tr th:each="post : ${posts}">
+        <td th:text="${post.id}"></td>
+        <td th:text="${post.title}"></td>
+        <td th:text="${post.visible}"></td>
+
+    <button class="btn-delete" th:data-id="${post.id}"> 삭제 </button>
+    <button class="btn-toggle" th:data-id="${post.id}">
+     노출 토글
+    </button>
+    </tr>
+</table>
+<script>
+    // 삭제요청
+    $(".btn-delete").click(function (){
+        const  id = $(this).data("id");
+
+        if (!confirm("정말 삭제할까요?")) return;
+
+        $.ajax({
+            url:"/admin/posts/" + id + "/delete",
+            type: "POST",
+            success: function () {
+                alert("삭제완료");
+                location.reload();
+            }
+        });
+    });
+    // 노출 요청
+    $(".btn-toggle").click(function (){
+        const id = $(this).data("id");
+
+        $.post("/admin/posts/" + id + "/toggle", function (){
+            location.reload();
+        });
+    });
+</script>
+</body>
+</html>
